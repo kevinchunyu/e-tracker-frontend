@@ -32,7 +32,7 @@
         dateInput.value = today;
 
         async function fetchExpenses() {
-            const res = await fetch('https://e-tracker-backend.onrender.com/api/expenses');
+            const res = await fetch('https://e-tracker-backend-1.onrender.com/api/expenses');
             const data = await res.json();
             list.innerHTML = '';
             data.forEach(exp => {
@@ -43,7 +43,7 @@
         }
 
         async function fetchBalance() {
-            const res = await fetch('https://e-tracker-backend.onrender.com/api/balance');
+            const res = await fetch('https://e-tracker-backend-1.onrender.com/api/balance');
             const data = await res.json();
             document.getElementById('balanceResult').textContent = data.verdict;
         }
@@ -61,7 +61,7 @@
                 paid_by: document.getElementById('paidBy').value,
                 date: document.getElementById('date').value
             };
-            await fetch('https://e-tracker-backend.onrender.com/api/expenses', {
+            await fetch('https://e-tracker-backend-1.onrender.com/api/expenses', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
