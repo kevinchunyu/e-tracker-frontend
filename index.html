@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#5C6BC0">
     <title>Simple Splitwise</title>
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
     <h1>Expense Tracker</h1>
@@ -15,63 +20,18 @@
             <option value="gf">JACKIE</option>
         </select>
         <input type="date" id="date" />
-        <button type="submit">Add</button>
+        <button type="submit">Add Expense</button>
     </form>
 
-    <h2>Expenses</h2>
+    <div class="expense-header">
+        <h2>Expenses</h2>
+        <span class="expense-count" id="expenseCount">0 expenses</span>
+    </div>
     <ul id="expensesList"></ul>
 
     <h2>Balance Summary</h2>
     <p id="balanceResult">Loading...</p>
 
-    <script>
-        const form = document.getElementById('expenseForm');
-        const list = document.getElementById('expensesList');
-        const dateInput = document.getElementById('date');
-        const today = new Date().toISOString().split('T')[0];
-        dateInput.value = today;
-
-        async function fetchExpenses() {
-            const res = await fetch('https://e-tracker-backend-1.onrender.com/api/expenses');
-            const data = await res.json();
-            list.innerHTML = '';
-            data.forEach(exp => {
-                const item = document.createElement('li');
-                item.textContent = `${exp.description} - $${exp.amount} paid by ${exp.paid_by}, split ${exp.split_between.join(" & ")} on ${exp.date}`;
-                list.appendChild(item);
-            });
-        }
-
-        async function fetchBalance() {
-            const res = await fetch('https://e-tracker-backend-1.onrender.com/api/balance');
-            const data = await res.json();
-            document.getElementById('balanceResult').textContent = data.verdict;
-        }
-
-        async function refreshAll() {
-            await fetchExpenses();
-            await fetchBalance();
-        }
-
-        form.addEventListener('submit', async e => {
-            e.preventDefault();
-            const body = {
-                description: document.getElementById('desc').value,
-                amount: document.getElementById('amount').value,
-                paid_by: document.getElementById('paidBy').value,
-                date: document.getElementById('date').value
-            };
-            await fetch('https://e-tracker-backend-1.onrender.com/api/expenses', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-            form.reset();
-            dateInput.value = today;
-            refreshAll();
-        });
-
-        refreshAll();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

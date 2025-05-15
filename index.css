@@ -1,0 +1,233 @@
+:root {
+    --primary: #5C6BC0;
+    --light-bg: #f9f9f9;
+    --border: #e0e0e0;
+    --text: #333;
+    --success: #66BB6A;
+    --danger: #EF5350;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    background-color: var(--light-bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+h1 {
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+    text-align: center;
+}
+
+h2 {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin: 2rem 0 1rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+}
+
+#expenseForm {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Make form responsive for mobile */
+@media (max-width: 600px) {
+    #expenseForm {
+        grid-template-columns: 1fr;
+    }
+    
+    button {
+        grid-column: 1 !important;
+    }
+}
+
+input, select {
+    padding: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border 0.2s;
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* Fix date input on iOS */
+input[type="date"] {
+    min-height: 2.8rem;
+}
+
+select {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235C6BC0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    padding-right: 2rem;
+}
+
+input:focus, select:focus {
+    border-color: var(--primary);
+}
+
+button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    grid-column: span 2;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #4a59a7;
+}
+
+#expensesList {
+    list-style: none;
+}
+
+#expensesList li {
+    background: white;
+    margin-bottom: 0.8rem;
+    padding: 1rem;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.exp-details {
+    flex: 1;
+    min-width: 65%;
+}
+
+/* Responsive layout for expense items */
+@media (max-width: 480px) {
+    #expensesList li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .exp-amount {
+        margin-left: 0 !important;
+        margin-top: 0.5rem;
+        align-self: flex-end;
+    }
+}
+
+.exp-amount {
+    font-weight: 500;
+    margin-left: 1rem;
+}
+
+.exp-date {
+    color: #757575;
+    font-size: 0.8rem;
+}
+
+.paid-by {
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
+}
+
+#balanceResult {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    font-size: 1.1rem;
+}
+
+.positive {
+    color: var(--success);
+}
+
+.negative {
+    color: var(--danger);
+}
+
+.zero-balance {
+    color: #9E9E9E;
+}
+
+.expense-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.expense-count {
+    font-size: 0.85rem;
+    color: #757575;
+    background: #f1f1f1;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+}
+
+/* iOS-specific adjustments */
+@supports (-webkit-touch-callout: none) {
+    input, select, button {
+        font-size: 16px; /* Prevents iOS zoom on focus */
+    }
+    
+    input[type="date"]::-webkit-date-and-time-value {
+        text-align: left;
+    }
+}
+
+/* Add responsive viewport adjustments */
+@media (max-width: 480px) {
+    body {
+        padding: 1rem;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    h2 {
+        font-size: 1.2rem;
+    }
+    
+    #expenseForm {
+        padding: 1rem;
+    }
+    
+    #balanceResult {
+        padding: 1rem;
+    }
+}
