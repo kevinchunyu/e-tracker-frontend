@@ -4,7 +4,6 @@ const dateInput = document.getElementById('date');
 const today = new Date().toISOString().split('T')[0];
 dateInput.value = today;
 
-// API base URL
 const API_URL = 'https://e-tracker-backend-1.onrender.com/api';
 
 /**
@@ -13,44 +12,67 @@ const API_URL = 'https://e-tracker-backend-1.onrender.com/api';
 async function fetchExpenses() {
     try {
         const res = await fetch(`${API_URL}/expenses`);
-        
-        if (!res.ok) {
-            throw new Error('Failed to fetch expenses');
-        }
-        
+        if (!res.ok) throw new Error('Failed to fetch expenses');
+
         const data = await res.json();
         list.innerHTML = '';
-        
-        // Update expense counter
+
         document.getElementById('expenseCount').textContent = `${data.length} expense${data.length !== 1 ? 's' : ''}`;
-        
-        // Render each expense
+
+        const trips = {};
         data.forEach(exp => {
-            renderExpense(exp);
+            const trip = exp.trip || 'default';
+            if (!trips[trip]) trips[trip] = [];
+            trips[trip].push(exp);
         });
+
+        for (const tripName in trips) {
+            // Container for each trip section
+            const tripSection = document.createElement('div');
+            tripSection.classList.add('trip-section');
+
+            // Header for the trip
+            const header = document.createElement('h3');
+            header.textContent = `Trip: ${tripName}`;
+            header.classList.add('trip-header');
+
+            // Content section for trip expenses
+            const content = document.createElement('div');
+            content.classList.add('trip-content');
+            // Optionally collapse by default:
+            // content.classList.add('collapsed');
+
+            trips[tripName].forEach(exp => content.appendChild(renderExpense(exp)));
+
+            // Toggle collapse on header click
+            header.addEventListener('click', () => {
+                content.classList.toggle('collapsed');
+            });
+
+            tripSection.appendChild(header);
+            tripSection.appendChild(content);
+            list.appendChild(tripSection);
+        }
     } catch (error) {
         console.error('Error fetching expenses:', error);
     }
 }
 
 /**
- * Render a single expense item
+ * Render a single expense item and return DOM element
  */
 function renderExpense(exp) {
     const item = document.createElement('li');
-    
-    // Format the date
+
     const expDate = new Date(exp.date);
     const formattedDate = expDate.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric'
     });
-    
-    // Convert API values to display names
+
     const paidByName = exp.paid_by === 'me' ? 'Kevin' : 'Jackie';
     const splitNames = exp.split_between.map(name => name === 'me' ? 'Kevin' : 'Jackie').join(" & ");
-    
-    // Create expense structure
+
     item.innerHTML = `
         <div class="exp-details">
             <div>${exp.description}</div>
@@ -59,30 +81,25 @@ function renderExpense(exp) {
         </div>
         <div class="exp-amount">$${parseFloat(exp.amount).toFixed(2)}</div>
     `;
-    
-    list.appendChild(item);
+
+    return item;
 }
 
 /**
- * Fetch current balance from the API
+ * Fetch and display balance
  */
 async function fetchBalance() {
     try {
         const res = await fetch(`${API_URL}/balance`);
-        
-        if (!res.ok) {
-            throw new Error('Failed to fetch balance');
-        }
-        
+        if (!res.ok) throw new Error('Failed to fetch balance');
+
         const data = await res.json();
-        
         const balanceElement = document.getElementById('balanceResult');
         balanceElement.textContent = data.verdict;
-        
-        // Add colored styling based on balance
-        if (data.verdict.includes("KEVIN owes")) {
+
+        if (data.verdict.includes("Kevin owes")) {
             balanceElement.className = "negative";
-        } else if (data.verdict.includes("JACKIE owes")) {
+        } else if (data.verdict.includes("Jackie owes")) {
             balanceElement.className = "positive";
         } else {
             balanceElement.className = "zero-balance";
@@ -94,7 +111,7 @@ async function fetchBalance() {
 }
 
 /**
- * Refresh all data from the API
+ * Refresh all data from API
  */
 async function refreshAll() {
     await fetchExpenses();
@@ -111,11 +128,8 @@ async function addExpense(expenseData) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(expenseData)
         });
-        
-        if (!res.ok) {
-            throw new Error('Failed to add expense');
-        }
-        
+
+        if (!res.ok) throw new Error('Failed to add expense');
         return true;
     } catch (error) {
         console.error('Error adding expense:', error);
@@ -123,24 +137,24 @@ async function addExpense(expenseData) {
     }
 }
 
-// Form submission handler
+// Handle form submission
 form.addEventListener('submit', async e => {
     e.preventDefault();
-    
+
     const expenseData = {
         description: document.getElementById('desc').value,
         amount: document.getElementById('amount').value,
         paid_by: document.getElementById('paidBy').value,
-        date: document.getElementById('date').value
+        date: document.getElementById('date').value,
+        trip: document.getElementById('trip').value || 'default'
     };
-    
+
     const submitButton = form.querySelector('button');
     submitButton.textContent = 'Adding...';
     submitButton.disabled = true;
-    
+
     try {
         const success = await addExpense(expenseData);
-        
         if (success) {
             form.reset();
             dateInput.value = today;
@@ -154,5 +168,5 @@ form.addEventListener('submit', async e => {
     }
 });
 
-// Initialize the app
+// Initialize app
 refreshAll();
